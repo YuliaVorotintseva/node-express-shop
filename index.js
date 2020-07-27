@@ -16,6 +16,8 @@ app.set('views', 'views')
 //регистрация папки public как публичной статической
 app.use(express.static('public'))
 
+app.use(express.urlencoded({extended: true}))
+
 app.use('/', home)
 app.use('/courses', courses)
 app.use('/add', add)

@@ -20,9 +20,11 @@
   "homepage": "https://github.com/YuliaVorotintseva/node-express-shop#readme",
   "dependencies": {
     "express": "^4.17.1",
-    "express-handlebars": "^5.1.0"
+    "express-handlebars": "^5.1.0",
+    "uuid": "^8.2.0"
   },
   "devDependencies": {
+    "@types/uuid": "^8.0.0",
     "nodemon": "^2.0.4"
   }
 }
