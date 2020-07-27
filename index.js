@@ -1,6 +1,8 @@
 const express = require('express')
-const path = require('path')
 const exphbs = require('express-handlebars')
+const home = require('./routes/home')
+const courses = require('./routes/courses')
+const add = require('./routes/add')
 
 const app = express()
 const hbs = exphbs.create({
@@ -11,13 +13,12 @@ const hbs = exphbs.create({
 app.engine('hbs', hbs.engine)
 app.set('view engine', 'hbs')
 app.set('views', 'views')
+//регистрация папки public как публичной статической
+app.use(express.static('public'))
 
-app.get('/', (request, response) => {
-    response.render('index')
-})
-app.get('/about', (request, response) => {
-    response.render('about')
-})
+app.use('/', home)
+app.use('/courses', courses)
+app.use('/add', add)
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
