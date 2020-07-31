@@ -9,6 +9,7 @@ const home = require('./routes/home')
 const courses = require('./routes/courses')
 const add = require('./routes/add')
 const card = require('./routes/card')
+const orders = require('./routes/orders')
 
 const User = require('./models/User')
 
@@ -42,6 +43,7 @@ app.use('/', home)
 app.use('/courses', courses)
 app.use('/add', add)
 app.use('/card', card)
+app.use('/orders', orders)
 
 mongoose.set('useNewUrlParser', true)
 mongoose.set('useFindAndModify', false)
