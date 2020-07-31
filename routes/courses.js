@@ -3,7 +3,7 @@ const router = Router()
 const Course = require('../models/Course')
 
 router.get('/', async (request, response) => {
-    const courses = await Course.getAllCourses()
+    const courses = await Course.find()
     response.render('courses', {
         title: 'Courses',
         isCourses: true,
@@ -12,7 +12,7 @@ router.get('/', async (request, response) => {
 })
 
 router.get('/:id', async (request, response) => {
-    const course = await Course.getCourseById(request.params.id)
+    const course = await Course.findById(request.params.id)
     response.render('course', {
         layout: 'empty',
         title: `Course ${course.title}`,
@@ -22,7 +22,7 @@ router.get('/:id', async (request, response) => {
 
 router.get('/:id/edit', async (request, response) => {
     if(!request.query.allow) return response.redirect('/')
-    const course = await Course.getCourseById(request.params.id)
+    const course = await Course.findById(request.params.id)
     response.render('edit', {
         title: `Edit course ${course.title}`,
         course
@@ -30,8 +30,23 @@ router.get('/:id/edit', async (request, response) => {
 })
 
 router.post('/edit', async (request, response) => {
-    await Course.update(request.body)
-    response.redirect('/courses')
+    const {id} = request.body
+    delete request.body.id
+    try {
+        await Course.findByIdAndUpdate(id, request.body)
+        response.redirect('/courses')
+    } catch(e) {
+        console.log(e)
+    }
+})
+
+router.post('/remove', async (request, response) => {
+    try {
+        await Course.deleteOne({_id: request.body.id})
+        response.redirect('/courses')
+    } catch(e) {
+        console.log(e)
+    }
 })
 
 module.exports = router
