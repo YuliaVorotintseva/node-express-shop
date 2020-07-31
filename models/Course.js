@@ -17,4 +17,11 @@ const course = new Schema({
     }
 })
 
+course.method('toClient', function() {
+    const c = this.toObject()
+    c.id = c._id
+    delete c._id
+    return c
+})
+
 module.exports = model('Course', course)
