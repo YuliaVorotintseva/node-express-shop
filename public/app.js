@@ -24,7 +24,12 @@ const $card = document.querySelector('#card')
 if($card) $card.addEventListener('click', event => {
     if(event.target.classList.contains('js-remove')) {
         const id = event.target.dataset.id
-        fetch('/card/remove/' + id, {method: 'delete'})
+        const csrf = event.target.dataset.csrf
+
+        fetch('/card/remove/' + id, {
+            method: 'delete',
+            headers: {'X-XSRF-TOKEN': csrf}
+        })
             .then(result => result.json(card))
             .then(card => {
                 if(card.courses.length) {
@@ -42,3 +47,5 @@ if($card) $card.addEventListener('click', event => {
             })
     }
 })
+
+M.Tabs.init(document.querySelectorAll('.tabs'))

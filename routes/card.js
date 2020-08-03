@@ -1,6 +1,9 @@
 const {Router} = require('express')
-const router = Router()
+const auth = require('../middleware/auth')
+
 const Course = require('../models/Course')
+
+const router = Router()
 
 const mapCartItems = items => items.map(c => ({
     ...c.courseId._doc,
@@ -10,13 +13,13 @@ const mapCartItems = items => items.map(c => ({
 
 const computeTotalPrice = courses => courses.reduce((total, course) => total += course.price*course.count, 0)
 
-router.post('/add', async (request, response) => {
+router.post('/add', auth, async (request, response) => {
     const course = await Course.findById(request.body.id)
     await request.user.addToCart(course)
     response.redirect('/card')
 })
 
-router.get('/', async (request, response) => {
+router.get('/', auth, async (request, response) => {
     const user = await request.user.populate('cart.items.courseId').execPopulate()
     const courses = mapCartItems(user.cart.items)
 
@@ -28,7 +31,7 @@ router.get('/', async (request, response) => {
     })
 })
 
-router.delete('/remove/:id', async (request, response) => {
+router.delete('/remove/:id', auth, async (request, response) => {
     await request.user.removeFromCart(request.params.id)
     const user = await request.user.populate('cart.items.courseId').execPopulate()
     const courses = mapCartItems(user.cart.items)

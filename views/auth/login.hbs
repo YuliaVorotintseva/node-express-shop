@@ -1,0 +1,74 @@
+<div class="auth">
+    <div class="row">
+        <div class="col s12">
+            <ul class="tabs">
+                <li class="tab col s6"><a class="active" href="#login">LOG UP</a></li>
+                <li class="tab col s6"><a href="#register">LOG IN</a></li>
+            </ul>
+        </div>
+
+        <div id="login" class="col s6 offset-3">
+            {{#if loginError}}
+                <p class="alert">{{loginError}}</p>
+            {{/if}}
+
+            <h1>Enter the store</h1>
+
+            <form action="/auth/login" method="POST">
+                <div class="input-field">
+                    <input id="email" name="email" type="email" class="validate" required>
+                    <label for="email">EMAIL</label>
+                    <span class="helper-text" data-error="Write email"></span>
+                </div>
+
+                <div class="input-field">
+                    <input id="password" name="password" type="password" class="validate" required>
+                    <label for="password">PASSWORD</label>
+                    <span class="helper-text" data-error="Write password"></span>
+                </div>
+
+                <input type="hidden" name="_csrf" value="{{csrf}}" />
+
+                <button class="btn btn-primary" type="submit">LOG UP</button>
+            </form>
+        </div>
+
+        <div id="register" class="col s6 offset-3">
+            {{#if registrationError}}
+                <p class="alert">{{registrationError}}</p>
+            {{/if}}
+
+            <h1>Create an account</h1>
+
+            <form action="/auth/registration" method="POST">
+                <div class="input-field">
+                    <input id="name" name="name" type="text" class="validate" required>
+                    <label for="name">NAME</label>
+                    <span class="helper-text" data-error="Write name"></span>
+                </div>
+
+                <div class="input-field">
+                    <input id="remail" name="email" type="email" class="validate" required>
+                    <label for="remail">EMAIL</label>
+                    <span class="helper-text" data-error="Write email"></span>
+                </div>
+
+                <div class="input-field">
+                    <input id="rpassword" name="password" type="password" class="validate" required>
+                    <label for="rpassword">PASSWORD</label>
+                    <span class="helper-text" data-error="Write password"></span>
+                </div>
+
+                <div class="input-field">
+                    <input id="confirm" name="confirm" type="password" class="validate" required>
+                    <label for="confirm">ENTER YOUR PASSWORD AGAIN</label>
+                    <span class="helper-text" data-error="Write password"></span>
+                </div>
+
+                <input type="hidden" name="_csrf" value="{{csrf}}" />
+
+                <button class="btn btn-primary" type="submit">LOG IN</button>
+            </form>
+        </div>
+    </div>
+</div>

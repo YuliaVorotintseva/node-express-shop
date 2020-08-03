@@ -1,6 +1,8 @@
 const {Router} = require('express')
-const router = Router()
+const auth = require('../middleware/auth')
 const Course = require('../models/Course')
+
+const router = Router()
 
 router.get('/', async (request, response) => {
     const courses = await Course.find().populate('userId', 'name email')
@@ -20,7 +22,7 @@ router.get('/:id', async (request, response) => {
     })
 })
 
-router.get('/:id/edit', async (request, response) => {
+router.get('/:id/edit', auth, async (request, response) => {
     if(!request.query.allow) return response.redirect('/')
     const course = await Course.findById(request.params.id)
     response.render('edit', {
@@ -29,7 +31,7 @@ router.get('/:id/edit', async (request, response) => {
     })
 })
 
-router.post('/edit', async (request, response) => {
+router.post('/edit', auth, async (request, response) => {
     const {id} = request.body
     delete request.body.id
     try {
@@ -40,7 +42,7 @@ router.post('/edit', async (request, response) => {
     }
 })
 
-router.post('/remove', async (request, response) => {
+router.post('/remove', auth, async (request, response) => {
     try {
         await Course.deleteOne({_id: request.body.id})
         response.redirect('/courses')
