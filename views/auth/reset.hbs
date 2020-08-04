@@ -1,0 +1,19 @@
+<div class="col s6 offset-3">
+    {{#if error}}
+        <p class="alert">{{error}}</p>
+    {{/if}}
+
+    <h1>Forget your password?</h1>
+
+    <form action="/auth/reset" method="POST">
+        <div class="input-field">
+            <input id="email" name="email" type="email" class="validate" required>
+            <label for="email">EMAIL</label>
+            <span class="helper-text" data-error="Write email"></span>
+        </div>
+
+        <input type="hidden" name="_csrf" value="{{csrf}}" />
+
+        <button class="btn btn-primary" type="submit">RESET</button>
+    </form>
+</div>

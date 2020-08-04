@@ -18,8 +18,7 @@ const add = require('./routes/add')
 const card = require('./routes/card')
 const orders = require('./routes/orders')
 const auth = require('./routes/auth')
-
-const MONGODB_URI = 'mongodb+srv://yulia:Nlm0wT15qBBqhX0e@cluster0.r0wf0.mongodb.net/node-express-shop?retryWrites=true&w=majority'
+const keys = require('./keys')
 
 const app = express()
 
@@ -31,7 +30,7 @@ const hbs = exphbs.create({
 
 const store = new MongoStore({
     collection: 'sessions',
-    uri: MONGODB_URI
+    uri: keys.MONGODB_URI
 })
 
 //регистрация модуля hbs как движок для рендеринга страниц
@@ -43,7 +42,7 @@ app.set('views', 'views')
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(express.urlencoded({extended: true}))
 app.use(session({
-    secret: 'secret value',
+    secret: keys.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     store
@@ -68,7 +67,7 @@ mongoose.set('useUnifiedTopology', true)
 
 async function start() {
     try {
-        await mongoose.connect(MONGODB_URI)
+        await mongoose.connect(keys.MONGODB_URI)
 
         const PORT = process.env.PORT || 3000
         app.listen(PORT, () => {
