@@ -12,12 +12,6 @@ const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-acce
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/user')
 
-const home = require('./routes/home')
-const courses = require('./routes/courses')
-const add = require('./routes/add')
-const card = require('./routes/card')
-const orders = require('./routes/orders')
-const auth = require('./routes/auth')
 const keys = require('./keys')
 
 const app = express()
@@ -25,6 +19,7 @@ const app = express()
 const hbs = exphbs.create({
     handlebars: allowInsecurePrototypeAccess(handlebars),
     defaultLayout: 'main',
+    helpers: require('./helpers/hbs-helpers'),
     extname: 'hbs'
 })
 
@@ -53,12 +48,12 @@ app.use(flash())
 app.use(varMiddleware)
 app.use(userMiddleware)
 
-app.use('/', home)
-app.use('/courses', courses)
-app.use('/add', add)
-app.use('/card', card)
-app.use('/orders', orders)
-app.use('/auth', auth)
+app.use('/', require('./routes/home'))
+app.use('/courses', require('./routes/courses'))
+app.use('/add', require('./routes/add'))
+app.use('/card', require('./routes/card'))
+app.use('/orders', require('./routes/orders'))
+app.use('/auth', require('./routes/auth'))
 
 mongoose.set('useNewUrlParser', true)
 mongoose.set('useFindAndModify', false)
