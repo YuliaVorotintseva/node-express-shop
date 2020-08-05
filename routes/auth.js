@@ -41,17 +41,40 @@ router.get('/password/:token', async (request, response) => {
     try {
         const user = await User.findOne({
             resetToken: request.params.token,
-            resetTokenExp: {$gr: Date.now()}
+            resetTokenExp: {$gt: Date.now()}
         })
 
         if(!user) response.redirect('auth/login')
         else {
-            response.render('auth/reset', {
+            response.render('auth/password', {
                 title: 'Recovery password',
                 error: request.flash('error'),
                 userId: user._id.toString(),
                 token: request.params.token
             })
+        }
+    } catch(error) {
+        console.log(error)
+    }
+})
+
+router.post('/password', async (request, response) => {
+    try {
+        const user = await User.findOne({
+            _id: request.body.userId,
+            resetToken: request.body.token,
+            resetTokenExp: {$gt: Date.now()}
+        })
+
+        if(user) {
+            user.password = bcrypt.hash(request.body.password, 10)
+            user.resetToken = undefined
+            user.resetTokenExp = undefined
+            await user.save()
+            response.redirect('auth/login')
+        } else {
+            request.flash('loginError', 'The user is not found')
+            response.redirect('auth/login')
         }
     } catch(error) {
         console.log(error)
