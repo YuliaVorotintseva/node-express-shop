@@ -1,4 +1,6 @@
 const {Router} = require('express')
+const {validationResult} = require('express-validator')
+const {courseValidators} = require('../utils/validators')
 const auth = require('../middleware/auth')
 const Course = require('../models/Course')
 
@@ -11,7 +13,21 @@ router.get('/', auth, (request, response) => {
     })
 })
 
-router.post('/', auth, async (request, response) => {
+router.post('/', auth, courseValidators, async (request, response) => {
+    const errors = validationResult(request)
+    if(!errors.isEmpty()) {
+        response.status(422).render('add', {
+            title: 'Add course',
+            isAdd: true,
+            error: errors.array()[0].msg,
+            data: {
+                title: request.body.title,
+                price: request.body.price,
+                img: request.body.img
+            }
+        })
+    }
+
     const course = new Course({
         title: request.body.title,
         price: request.body.price,
