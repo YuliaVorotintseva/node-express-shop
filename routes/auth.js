@@ -1,9 +1,11 @@
 const {Router} = require('express')
 const bcrypt = require('bcryptjs')
+const {validationResult} = require('express-validator')
 const nodemailer = require('nodemailer')
 const sendgrid = require('nodemailer-sendgrid-transport')
 const crypto = require('crypto')
 
+const {regValidators} = require('../utils/validators')
 const keys = require('../keys')
 const regEmail = require('../emails/registration')
 const resetEmail = require('../emails/reset')
@@ -135,26 +137,26 @@ router.post('/login', async (request, response) => {
     }
 })
 
-router.post('/registration', async (request, response) => {
+router.post('/registration', regValidators, async (request, response) => {
     try {
-        const {name, email, password, confirm} = request.body
-        const candidate = await User.findOne({email})
+        const {name, email, password} = request.body
 
-        if(candidate) {
-            request.flash('registrationError', 'There is already a user with this email')
-            response.redirect('/auth/login#register')
-        } else {
-            const hashPassword = await bcrypt.hash(password, 10)
-            const user = new User({
-                name,
-                email,
-                password: hashPassword,
-                cart: {items: []}
-            })
-            await user.save()
-            response.redirect('/auth/login#login')
-            await transporter.sendMail(regEmail(email))
+        const errors = validationResult(request)
+        if(!errors.isEmpty()) {
+            request.flash('registrationError', errors.array()[0].msg)
+            return response.status(422).redirect('/auth/login#register')
         }
+
+        const hashPassword = await bcrypt.hash(password, 10)
+        const user = new User({
+            name,
+            email,
+            password: hashPassword,
+            cart: {items: []}
+        })
+        await user.save()
+        response.redirect('/auth/login#login')
+        await transporter.sendMail(regEmail(email))
     } catch(error) {
         console.log(error)
     }

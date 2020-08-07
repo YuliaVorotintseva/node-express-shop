@@ -19,7 +19,7 @@ const app = express()
 const hbs = exphbs.create({
     handlebars: allowInsecurePrototypeAccess(handlebars),
     defaultLayout: 'main',
-    helpers: require('./helpers/hbs-helpers'),
+    helpers: require('./utils/hbs-helpers'),
     extname: 'hbs'
 })
 
