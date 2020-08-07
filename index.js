@@ -55,6 +55,8 @@ app.use('/card', require('./routes/card'))
 app.use('/orders', require('./routes/orders'))
 app.use('/auth', require('./routes/auth'))
 
+app.use(require('./middleware/error'))
+
 mongoose.set('useNewUrlParser', true)
 mongoose.set('useFindAndModify', false)
 mongoose.set('useCreateIndex', true)
