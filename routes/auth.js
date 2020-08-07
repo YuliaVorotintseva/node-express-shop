@@ -5,7 +5,7 @@ const nodemailer = require('nodemailer')
 const sendgrid = require('nodemailer-sendgrid-transport')
 const crypto = require('crypto')
 
-const {regValidators} = require('../utils/validators')
+const {regValidators, logValidators} = require('../utils/validators')
 const keys = require('../keys')
 const regEmail = require('../emails/registration')
 const resetEmail = require('../emails/reset')
@@ -110,28 +110,19 @@ router.post('/reset', (request, response) => {
     }
 })
 
-router.post('/login', async (request, response) => {
+router.post('/login', logValidators, async (request, response) => {
     try {
-        const {email, password} = request.body
-        const candidate = await User.findOne({email})
-
-        if(candidate) {
-            const areSame = await bcrypt.compare(password, candidate.password)
-            if(areSame) {
-                request.session.user = candidate
-                request.session.isAuthenticated = true
-                request.session.save(error => {
-                    if(error) throw error
-                    response.redirect('/')
-                })
-            } else {
-                request.flash('loginError', 'Wrong password')
-                response.redirect('/auth/login#login')
+        const errors = validationResult(request)
+        if(!errors.isEmpty()) {
+            const error = errors.array()[0].msg
+            if(error == 'The user does not exist') {
+                request.flash('registrationError', error)
+                return response.status(422).redirect('/auth/login#register')
             }
-        } else {
-            request.flash('loginError', 'The user does not exist')
-            response.redirect('/auth/login#login')
+            request.flash('loginError', error)
+            return response.status(422).redirect('/auth/login#login')
         }
+        response.redirect('/')
     } catch(error) {
         console.log(error)
     }
@@ -139,6 +130,7 @@ router.post('/login', async (request, response) => {
 
 router.post('/registration', regValidators, async (request, response) => {
     try {
+        console.log(request.body)
         const {name, email, password} = request.body
 
         const errors = validationResult(request)
