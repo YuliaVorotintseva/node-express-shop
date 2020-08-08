@@ -38,7 +38,8 @@ router.get('/:id/edit', auth, async (request, response) => {
 
         response.render('edit', {
             title: `Edit course ${course.title}`,
-            course
+            course,
+            error: request.flash('error')
         })
     } catch(error) {
         console.log(error)

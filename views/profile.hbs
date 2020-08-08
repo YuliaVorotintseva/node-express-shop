@@ -18,6 +18,10 @@
     </div>
 
     <div class="col s6">
+        {{#if error}}
+            <p class="alert">{{error}}</p>
+        {{/if}}
+        
         <form action="/profile" method="POST" enctype="multipart/form-data">
             <p>Your email: <strong>{{user.email}}</strong></p>
 

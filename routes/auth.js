@@ -5,7 +5,8 @@ const nodemailer = require('nodemailer')
 const sendgrid = require('nodemailer-sendgrid-transport')
 const crypto = require('crypto')
 
-const {regValidators, logValidators} = require('../utils/validators')
+const {regValidators, logValidators, passwordValidators} = require('../utils/validators')
+
 const keys = require('../keys')
 const regEmail = require('../emails/registration')
 const resetEmail = require('../emails/reset')
@@ -22,7 +23,8 @@ router.get('/login', (request, response) => {
         title: 'Authorization',
         isLogin: true,
         loginError: request.flash('loginError'),
-        registrationError: request.flash('registrationError')
+        registrationError: request.flash('registrationError'),
+        success: request.flash('success')
     })
 })
 
@@ -33,7 +35,7 @@ router.get('/logout', (request, response) => {
 router.get('/reset', (request, response) => {
     response.render('auth/reset', {
         title: 'Reset password',
-        error: request.flash('error')
+        error: request.flash('error'),
     })
 })
 
@@ -60,8 +62,14 @@ router.get('/password/:token', async (request, response) => {
     }
 })
 
-router.post('/password', async (request, response) => {
+router.post('/password', passwordValidators, async (request, response) => {
     try {
+        const errors = validationResult(request)
+        if(!errors.isEmpty()) {
+            request.flash('error', errors.array()[0].msg)
+            return response.status(422).redirect(`/auth/password/${request.body.token}`)
+        }
+
         const user = await User.findOne({
             _id: request.body.userId,
             resetToken: request.body.token,
@@ -73,10 +81,11 @@ router.post('/password', async (request, response) => {
             user.resetToken = undefined
             user.resetTokenExp = undefined
             await user.save()
+            request.flash('success', 'Password was updated successfully')
             response.redirect('/auth/login')
         } else {
-            request.flash('loginError', 'The user is not found')
-            response.redirect('/auth/login')
+            request.flash('error', 'The password change time has expired')
+            return response.status(422).redirect('/auth/reset')
         }
     } catch(error) {
         console.log(error)
@@ -91,6 +100,12 @@ router.post('/reset', (request, response) => {
                 response.redirect('/auth/reset')
             }
 
+            const errors = validationResult(request)
+            if(!errors.isEmpty()) {
+                request.flash('error', errors.array()[0].msg)
+                return response.status(422).redirect('/auth/reset')
+            }
+
             const token = buffer.toString('hex')
             const candidate = await User.findOne({email: request.body.email})
 
@@ -99,6 +114,7 @@ router.post('/reset', (request, response) => {
                 candidate.resetTokenExp = Date.now() + 3600*1000
                 await candidate.save()
                 await transporter.sendMail(resetEmail(candidate.email, token))
+                request.flash('success', 'The notification about the password change has been sent successfully')
                 response.redirect('/auth/login')
             } else {
                 request.flash('error', 'There is no such user')
@@ -130,7 +146,6 @@ router.post('/login', logValidators, async (request, response) => {
 
 router.post('/registration', regValidators, async (request, response) => {
     try {
-        console.log(request.body)
         const {name, email, password} = request.body
 
         const errors = validationResult(request)

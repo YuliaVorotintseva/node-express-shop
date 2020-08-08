@@ -52,6 +52,21 @@ exports.logValidators = [
         .isLength({min: 6, max: 56}).trim(),
 ]
 
+exports.profileValidators = [
+    body('name', 'Name must contain at least 3 characters').isLength({min: 3}).trim()
+]
+
+exports.passwordValidators = [
+    body('password', 'The password must contain at least 6 characters')
+        .isLength({min: 6, max: 56}).trim(),
+
+    body('confirm')
+        .custom((value, {req}) => {
+            if (value !== req.body.password) throw new Error('Passwords must match')
+            return true
+        }).trim(),
+]
+
 exports.courseValidators = [
     body('title', 'Title must contain at least 3 characters')
         .isLength({min: 3}).trim(),
