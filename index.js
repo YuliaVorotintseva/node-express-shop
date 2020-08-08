@@ -9,6 +9,7 @@ const handlebars = require('handlebars')
 const exphbs = require('express-handlebars')
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
 
+const fileMiddleware = require('./middleware/file')
 const varMiddleware = require('./middleware/variables')
 const userMiddleware = require('./middleware/user')
 
@@ -35,6 +36,8 @@ app.set('views', 'views')
 
 //регистрация папки public как публичной статической
 app.use(express.static(path.join(__dirname, 'public')))
+app.use('/images', express.static(path.join(__dirname, 'images')))
+
 app.use(express.urlencoded({extended: true}))
 app.use(session({
     secret: keys.SESSION_SECRET,
@@ -43,12 +46,14 @@ app.use(session({
     store
 }))
 
+app.use(fileMiddleware.single('avatar'))
 app.use(csrf())
 app.use(flash())
 app.use(varMiddleware)
 app.use(userMiddleware)
 
 app.use('/', require('./routes/home'))
+app.use('/profile', require('./routes/profile'))
 app.use('/courses', require('./routes/courses'))
 app.use('/add', require('./routes/add'))
 app.use('/card', require('./routes/card'))
