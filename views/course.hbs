@@ -1,5 +1,9 @@
 <div class="course">
     <h1>{{course.title}}</h1>
-    <img src="{{course.img}}" alt="{{course.title}}" />
+    {{#if course.img}}
+        <img src="/{{course.img}}" alt="{{course.title}}" />
+    {{else}}
+        <img src="/images/course.png" alt="{{course.title}}" />
+    {{/if}}
     <p class="price big">{{course.price}}</p>
 </div>

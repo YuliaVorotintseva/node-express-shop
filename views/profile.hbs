@@ -11,7 +11,7 @@
         {{else}}
             <img
                 class="avatar"
-                src="https://www.meme-arsenal.com/memes/04bcd7b319425e737c9df24fbab151fe.jpg"
+                src="/images/avatars/default-avatar.jpg"
                 alt="{{user.name}}"
             />
         {{/if}}
@@ -26,7 +26,7 @@
             <p>Your email: <strong>{{user.email}}</strong></p>
 
             <div class="input-field">
-                <input id="name" name="name" type="text" class="validate" value="{{user.name}}" required>
+                <input id="name" name="name" type="text" class="validate" value="{{user.name}}">
                 <label for="name">NAME</label>
                 <span class="helper-text" data-error="Write name"></span>
             </div>

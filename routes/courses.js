@@ -59,12 +59,16 @@ router.post('/edit', auth, courseValidators, async (request, response) => {
     try {
         const course = await Course.findById(id)
         if(course.userId.toString() !== request.user._id.toString()) response.redirect('/courses')
-        Object.assign(course, request.body)
+
+        const toChange = {...request.body}
+        toChange.img = request.files ? request.files.img[0].path : null
+
+        Object.assign(course, toChange)
         await course.save()
         response.redirect('/courses')
     } catch(e) {
         console.log(e)
-    }
+    }  
 })
 
 router.post('/remove', auth, async (request, response) => {

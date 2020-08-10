@@ -1,5 +1,6 @@
 const {Router} = require('express')
 const {validationResult} = require('express-validator')
+const multer = require('../middleware/file')
 const {courseValidators} = require('../utils/validators')
 const auth = require('../middleware/auth')
 const Course = require('../models/Course')
@@ -23,7 +24,7 @@ router.post('/', auth, courseValidators, async (request, response) => {
             data: {
                 title: request.body.title,
                 price: request.body.price,
-                img: request.body.img
+                img: request.files ? request.files.img[0].path : null
             }
         })
     }
@@ -31,7 +32,7 @@ router.post('/', auth, courseValidators, async (request, response) => {
     const course = new Course({
         title: request.body.title,
         price: request.body.price,
-        img: request.body.img,
+        img: request.files ? request.files.img[0].path : null,
         userId: request.user
     })
 

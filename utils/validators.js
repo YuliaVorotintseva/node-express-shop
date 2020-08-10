@@ -71,7 +71,5 @@ exports.courseValidators = [
     body('title', 'Title must contain at least 3 characters')
         .isLength({min: 3}).trim(),
 
-    body('price', 'Write correct price').isNumeric(),
-
-    body('img', 'Write correct URL').isURL()
+    body('price', 'Write correct price').isNumeric()
 ]

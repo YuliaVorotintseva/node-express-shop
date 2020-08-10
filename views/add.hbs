@@ -4,7 +4,7 @@
     <p class="alert">{{error}}</p>
 {{/if}}
 
-<form action="/add" method="POST">
+<form action="/add" method="POST" enctype="multipart/form-data">
     <div class="input-field">
         <input id="title" name="title" type="text" class="validate" value="{{data.title}}" required>
         <label for="title">NAME</label>
@@ -17,10 +17,14 @@
         <span class="helper-text" data-error="Write price"></span>
     </div>
 
-    <div class="input-field">
-        <input id="img" name="img" type="text" class="validate" value="{{data.img}}" required>
-        <label for="img">IMG URL</label>
-        <span class="helper-text" data-error="Write url"></span>
+    <div class="file-field input-field">
+        <div class="btn">
+            <span>IMAGE</span>
+            <input type="file" name="img">
+        </div>
+        <div class="file-path-wrapper">
+            <input class="file-path validate" type="text">
+        </div>
     </div>
 
     <input type="hidden" name="_csrf" value="{{csrf}}" />

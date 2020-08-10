@@ -9,11 +9,6 @@ const path = require('path')
 const handlebars = require('handlebars')
 const exphbs = require('express-handlebars')
 const {allowInsecurePrototypeAccess} = require('@handlebars/allow-prototype-access')
-
-const fileMiddleware = require('./middleware/file')
-const varMiddleware = require('./middleware/variables')
-const userMiddleware = require('./middleware/user')
-
 const keys = require('./keys')
 
 const app = express()
@@ -47,12 +42,12 @@ app.use(session({
     store
 }))
 
-app.use(fileMiddleware.single('avatar'))
+app.use(require('./middleware/file'))
 app.use(csrf())
 app.use(flash())
 app.use(helmet())
-app.use(varMiddleware)
-app.use(userMiddleware)
+app.use(require('./middleware/variables'))
+app.use(require('./middleware/user'))
 
 app.use('/', require('./routes/home'))
 app.use('/profile', require('./routes/profile'))
