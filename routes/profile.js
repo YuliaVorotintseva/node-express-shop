@@ -25,7 +25,7 @@ router.post('/', auth, profileValidators, async (request, response) => {
 
         const user = await User.findById(request.user._id)
         const toChange = {name: request.body.name}
-        toChange.avatar = request.files ? request.files.avatar[0].path : null
+        toChange.avatar = request.files.avatar ? request.files.avatar[0].path : null
 
         Object.assign(user, toChange)
         await user.save()

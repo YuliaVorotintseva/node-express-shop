@@ -32,7 +32,7 @@ router.post('/', auth, courseValidators, async (request, response) => {
     const course = new Course({
         title: request.body.title,
         price: request.body.price,
-        img: request.files ? request.files.img[0].path : null,
+        img: request.files.img ? request.files.img[0].path : null,
         userId: request.user
     })
 

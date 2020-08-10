@@ -61,7 +61,7 @@ router.post('/edit', auth, courseValidators, async (request, response) => {
         if(course.userId.toString() !== request.user._id.toString()) response.redirect('/courses')
 
         const toChange = {...request.body}
-        toChange.img = request.files ? request.files.img[0].path : null
+        toChange.img = request.files.img ? request.files.img[0].path : null
 
         Object.assign(course, toChange)
         await course.save()
